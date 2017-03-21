@@ -11,6 +11,8 @@
 (function () {
     var AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
     var ctx = new AudioContext();
+    var compressor = ctx.createDynamicsCompressor();
+    compressor.connect(ctx.destination);
 
     var playOne = function (hzList, oType) {
         var oNode;
@@ -28,7 +30,7 @@
                 oNode = ctx.createOscillator();
                 oNode.frequency.value = p[0];
                 oNode.type = oType || 'square';
-                oNode.connect(ctx.destination);
+                oNode.connect(compressor);
                 oNode.start(0);
             }
             i ++;

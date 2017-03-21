@@ -39,11 +39,10 @@
     var sampleRate;
 
     var analyser = ctx.createAnalyser();
-    analyser.fftSize = 8192;
+    analyser.fftSize = 16384;
     analyser.smoothingTimeConstant = 0;
     var freqByteData = new Uint8Array(analyser.frequencyBinCount / 8);
 
-    var isEnd = false;
     var hzList = [];
     var curHz = [0, 0];
     var curSample = 0;
@@ -62,7 +61,7 @@
             }
         }
         maxItoF = maxI * (sampleRate / 2 / analyser.frequencyBinCount);
-        if (maxF > 100) {
+        if (maxF > 200) {
             freq = fixFreq(maxItoF);
         } else {
             freq = 0;
@@ -71,7 +70,7 @@
             curHz[1] += 256;
         } else {
             hzList.push(curHz);
-            //console.log(curHz[0] + ', ' + curHz[1]);
+            console.log(curHz[0] + ', ' + curHz[1]);
             curHz = [freq, 256];
         }
         curSample += 256;
@@ -86,7 +85,7 @@
         source.start(0);
     };
 
-    loadBuffer('res/triangle.mp3', function (buf) {
+    loadBuffer('res/rectangle2.mp3', function (buf) {
         sampleRate = buf.sampleRate;
         buffer = buf;
         document.getElementById('run').removeAttribute('disabled');
@@ -101,7 +100,6 @@
         }
         var json = JSON.stringify(hzList);
         document.getElementById('json').innerHTML = json;
-        document.getElementById('run').setAttribute('disabled', 'disabled');
 
         analyser.disconnect(scriptProcesser);
         scriptProcesser.disconnect(ctx.destination);
@@ -113,7 +111,17 @@
         play();
     };
 
+    var testSound = function () {
+        analyser.connect(ctx.destination);
+        play();
+        setInterval(function () {
+            analyser.getByteFrequencyData(freqByteData);
+        }, 5);
+    };
+
     document.getElementById('run').onclick = function () {
+        document.getElementById('run').setAttribute('disabled', 'disabled');
         analytic();
+        // testSound();
     };
 })();
