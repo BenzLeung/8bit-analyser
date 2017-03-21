@@ -36,6 +36,7 @@
     };
 
     var buffer;
+    var bufferArray;
     var sampleRate;
 
     var analyser = ctx.createAnalyser();
@@ -61,16 +62,17 @@
             }
         }
         maxItoF = maxI * (sampleRate / 2 / analyser.frequencyBinCount);
-        if (maxF > 200) {
+        if (maxF > 100) {
             freq = fixFreq(maxItoF);
         } else {
             freq = 0;
         }
+
         if (curHz[0] == freq) {
             curHz[1] += 256;
         } else {
             hzList.push(curHz);
-            console.log(curHz[0] + ', ' + curHz[1]);
+            console.log(curHz[0] + ', ' + curHz[1] + ', ');
             curHz = [freq, 256];
         }
         curSample += 256;
@@ -82,6 +84,7 @@
         source.buffer = buffer;
         source.connect(analyser);
         source.onended = ended;
+        bufferArray = buffer.getChannelData(0);
         source.start(0);
     };
 
@@ -100,6 +103,9 @@
         }
         var json = JSON.stringify(hzList);
         document.getElementById('json').innerHTML = json;
+
+        console.log('curSample: ', curSample);
+        console.log('sampleLength: ', buffer.length);
 
         analyser.disconnect(scriptProcesser);
         scriptProcesser.disconnect(ctx.destination);
