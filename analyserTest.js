@@ -40,7 +40,7 @@
     var sampleRate;
 
     var analyser = ctx.createAnalyser();
-    analyser.fftSize = 16384;
+    analyser.fftSize = 8192;
     analyser.smoothingTimeConstant = 0;
     var freqByteData = new Uint8Array(analyser.frequencyBinCount / 8);
 
